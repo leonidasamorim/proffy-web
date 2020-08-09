@@ -1,41 +1,60 @@
 import React from "react";
 
 import whatsappIcon from "../../assets/images/icons/whatsapp.svg";
-import avatarLogo from "../../assets/images/avatar.png";
 
-import './styles.css';
+import "./styles.css";
+import api from "../../services/api";
 
-function TeacherItem() {
-    return (
-        <article className="teacher-item">
-        <header>
-          <img src={avatarLogo} alt="Avatar Logo" />
-          <div>
-            <strong>Professor Teste</strong>
-            <span>Engenharia Quântica</span>
-          </div>
-        </header>
+export interface Teacher {
+  id: number;
+  name: string;
+  avatar: string;
+  whatsapp: string;
+  bio: string;
+  subject: string;
+  cost: number;
+}
+
+interface TeacherItemProps {
+  teacher: Teacher;
+}
+
+const TeacherItem: React.FC<TeacherItemProps> = ({ teacher }) => {
+  function createNewConnection() {
+    api.post("connections", {
+      user_id: teacher.id,
+    });
+  }
+
+  return (
+    <article className="teacher-item">
+      <header>
+        <img src={teacher.avatar} alt={teacher.name} />
+        <div>
+          <strong>{teacher.name}</strong>
+          <span>{teacher.subject}</span>
+        </div>
+      </header>
+
+      <p>{teacher.bio}</p>
+
+      <footer>
         <p>
-          É um fato conhecido de todos que um leitor se distrairá com o
-          conteúdo de texto legível de uma página quando estiver examinando
-          sua diagramação. <br/><br/>  A vantagem de usar Lorem Ipsum é que ele tem uma
-          distribuição normal de letras, ao contrário de "Conteúdo aqui,
-          conteúdo aqui", fazendo com que ele tenha uma aparência similar a de
-          um texto legível.
+          Preço/hora
+          <strong>R$ {teacher.cost}</strong>
         </p>
 
-        <footer>
-          <p>
-            Preço/Hora:
-            <strong>R$ 120,00</strong>
-          </p>
-          <button type="button">
-            <img src={whatsappIcon} alt="Entre em contato" />
-            Entrar em contato
-          </button>
-        </footer>
-      </article>
-    );
-}
+        <a
+          target="_blank"
+          href={`https://wa.me/${teacher.whatsapp}`}
+          onClick={createNewConnection}
+        >
+          <img src={whatsappIcon} alt="WhatsApp" />
+          Entrar em contato
+        </a>
+      </footer>
+    </article>
+  );
+};
 
 export default TeacherItem;

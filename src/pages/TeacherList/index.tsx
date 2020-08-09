@@ -1,60 +1,95 @@
-import React from "react";
-
-import PageHeader from "../../components/PageHeader";
+import React, { useState, FormEvent } from "react";
+import { FiSearch } from "react-icons/fi";
 
 import "./styles.css";
-import TeacherItem from "../../components/TeacherItem";
+
+import PageHeader from "../../components/PageHeader";
+import TeacherItem, { Teacher } from "../../components/TeacherItem";
 import Input from "../../components/Input";
 import Select from "../../components/Select";
 
-function TeacherList() {
+import api from "../../services/api";
+
+const TeacherList: React.FC = () => {
+  const [teachers, setTeachers] = useState([]);
+
+  const [subject, setSubject] = useState("");
+  const [week_day, setWeekDay] = useState("");
+  const [time, setTime] = useState("");
+
+  async function searchTeachers(e: FormEvent) {
+    e.preventDefault();
+
+    const res = await api.get("classes", {
+      params: {
+        subject,
+        week_day,
+        time,
+      },
+    });
+
+    setTeachers(res.data);
+  }
+
   return (
     <div id="page-teacher-list" className="container">
-      <PageHeader title="Estes são os proffys disponíveis.">
-        <form action="" id="search-teachers">
-          
-        <Select 
-          name="subject" 
-          label="Matéria" 
-          options={[
-            { value: 'Artes', label: 'Artes'},
-            { value: 'Biologia', label: 'Biologia'},
-            { value: 'Ciências', label: 'Ciências'},
-            { value: 'Educação Física', label: 'Educação Física'},
-            { value: 'Matemática', label: 'Matemática'},
-            { value: 'Português', label: 'Português'},
-            { value: 'História', label: 'História'},
-            { value: 'Química', label: 'Química'}
-          ]}
+      <PageHeader title="Esses são os proffys disponíveis.">
+        <form id="search-teachers" onSubmit={searchTeachers}>
+          <Select
+            name="subject"
+            label="Matéria"
+            value={subject}
+            onChange={(e) => setSubject(e.target.value)}
+            options={[
+              { value: "Artes", label: "Artes" },
+              { value: "Biologia", label: "Biologia" },
+              { value: "Química", label: "Química" },
+              { value: "Física", label: "Física" },
+              { value: "Geografia", label: "Geografia" },
+              { value: "História", label: "História" },
+              { value: "Matemática", label: "Matemática" },
+              { value: "Português", label: "Português" },
+              { value: "Redação", label: "Redação" },
+              { value: "Sociologia", label: "Sociologia" },
+              { value: "Filosofia", label: "Filosofia" },
+            ]}
           />
-          
-          <Select 
-          name="week_day" 
-          label="Dia da Semana" 
-          options={[
-            { value: '0', label: 'Domingo'},
-            { value: '1', label: 'Segunda-Feira'},
-            { value: '2', label: 'Terça-Feira'},
-            { value: '3', label: 'Quarta-Feira'},
-            { value: '4', label: 'Quinta-Feira'},
-            { value: '5', label: 'Sexta-Feira'},
-            { value: '6', label: 'Sábado'}
-          ]}
+          <Select
+            name="week_day"
+            label="Dia da semana"
+            value={week_day}
+            onChange={(e) => setWeekDay(e.target.value)}
+            options={[
+              { value: "0", label: "Domingo" },
+              { value: "1", label: "Segunda-Feira" },
+              { value: "2", label: "Terça-Feira" },
+              { value: "3", label: "Quarta-Feira" },
+              { value: "4", label: "Quinta-Feira" },
+              { value: "5", label: "Sexta-Feira" },
+              { value: "6", label: "Sábado" },
+            ]}
+          />
+          <Input
+            name="time"
+            label="Hora"
+            type="time"
+            value={time}
+            onChange={(e) => setTime(e.target.value)}
           />
 
-          <Input type="time" name="time" label="Hora" />
-          
+          <button type="submit">
+            <FiSearch size={22} />
+          </button>
         </form>
       </PageHeader>
 
       <main>
-      <TeacherItem/>
-      <TeacherItem/>
-      <TeacherItem/>
-      <TeacherItem/>
+        {teachers.map((teacher: Teacher) => {
+          return <TeacherItem key={teacher.id} teacher={teacher} />;
+        })}
       </main>
     </div>
   );
-}
+};
 
 export default TeacherList;
