@@ -62,7 +62,7 @@ const TeacherForm: React.FC = () => {
         history.push("/");
       })
       .catch(() => {
-        alert("Erro no cadastro");
+        alert("Erro no cadastro. Verifique e tente novamente");
       });
   }
 
